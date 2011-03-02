@@ -1,7 +1,7 @@
 <div id="content-header">
       <img src="/images/show_finance.png" alt="" />
-  <h1>Fee collection dates</h1>
-  <h3>View fee collection dates</h3>
+      <h1><%= t('app.views.finance.fee_collection_view.fee_collection_dates') %></h1>
+      <h3><%= t('app.views.finance.fee_collection_view.view_fee_collection_dates') %></h3>
   <div id="app-back-button">
     <%= link_to_function image_tag("/images/buttons/back.png",:border => 0), "history.back()" %>
   </div>
@@ -9,9 +9,9 @@
 <div id="page-yield">
 
   <div id="batch">
-    <div class="label-field-pair"><label>Select a course : </label>
+    <div class="label-field-pair"><label><%= t('app.views.finance.fee_collection_view.select_a_course') %>:</label>
       <div class="text-input-bg"> <%= select("id",:id,@batchs.map { |c| [c.full_name, c.id] },
-        {:prompt => "Select class"},
+        {:prompt => t('app.views.finance.fee_collection_view.select_class')},
         {:onChange => "#{remote_function(:url => {:action => "fee_collection_dates_batch"}, :with => "'id='+value")}"})%> </div>
   </div>
   </div>
