@@ -1,7 +1,7 @@
 <div id="content-header">
   <img src="/images/show_finance.png" alt="" />
-  <h1>Master Category</h1>
-  <h3>Finance Management</h3>
+  <h1><%= t('app.views.finance.master_fees.master_category') %></h1>
+  <h3><%= t('app.views.finance.master_fees.finance_management') %></h3>
   <div id="app-back-button">
     <%= link_to_function image_tag("/images/buttons/back.png",:border => 0), "history.back()" %>
   </div>
@@ -13,16 +13,16 @@
   <div class="box">
   <div class="link-box">
     <div class="link-heading">
-     <%= link_to_remote 'Create Category', :url => { :action => 'master_category_new'} %>
+     <%= link_to_remote t('app.views.finance.master_fees.create_category'), :url => { :action => 'master_category_new'} %>
     </div>
-    <div class="link-descr"> Creates Master Category</div>
+    <div class="link-descr"><%= t('app.views.finance.master_fees.create_category_desc') %></div>
   </div>
 
   <div class="link-box">
     <div class="link-heading">
-      <%= link_to_remote 'Create Particulars', :url => { :action => 'fees_particulars_new'} %>
+      <%= link_to_remote t('app.views.finance.master_fees.create_particulars'), :url => { :action => 'fees_particulars_new'} %>
     </div>
-    <div class="link-descr"> Create particulars</div>
+    <div class="link-descr"><%= t('app.views.finance.master_fees.create_particulars_desc') %></div>
   </div>
 
   <div id="modal-box" style="display:none;"></div>

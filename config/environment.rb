@@ -12,4 +12,8 @@ Rails::Initializer.run do |config|
 
   config.load_once_paths += %W( #{RAILS_ROOT}/lib )
   config.load_paths += Dir["#{RAILS_ROOT}/app/models/*"].find_all { |f| File.stat(f).directory? }
+  
+  # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
+  # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
+  config.i18n.default_locale = :es
 end

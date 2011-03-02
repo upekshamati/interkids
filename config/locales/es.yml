@@ -1,11 +1,57 @@
 es:
-  welcome:
-    paragraph: "dipesh"
-    title : "നമസ്കാരം,  ഫെടെനയിലെക്ക് സ്വാഗതം "
-    dashboard : "നിയന്ത്രണോപകരണ സജ്ജീകരണം"
-    student : "വിദ്യാര്‍ഥികള്‍"
-    timetable : "സമയ പട്ടിക‍‍"
-    settings : "സജ്ജീകരണം "
-    attendance : "ഹാജര്‍ പട്ടിക"
-    news : "വാര്‍ത്ത‍‍"
-    more : "കൂടുതല്‍"
+  app:
+    views:
+      user:
+        login:
+          login: 'Entrar'
+          username: 'Usuario'
+          password: 'Clave'
+          remember_me: 'Recordarme'
+          help: 'Ayuda'
+          help_forgotten_my_password: 'He olvidado mi clave'
+        dashboard:
+          welcome: 'Bienvenido'
+          to_fedena_dashboard: 'to Fedena dashboard'
+      finance:
+        fees_index:
+          fees: 'Pago de servicios'
+          manages_fees: 'Administración de Servicios'
+          create_fees: 'Crear servicio'
+          create_fees_desc: 'Creates Master Fees and Additional Fees'
+          fee_collection: 'Gastos por curso'
+          fee_collection_desc: 'Creates new feel collecting dates'
+          fees_submission: 'Fees Submission'
+          fees_submission_desc: 'Fees Submission'
+          fees_structure: 'Fees Structure'
+          fees_structure_desc: 'Displays fees Structure for student'
+          fees_defaulters: 'Fees Defaulters'
+          fees_defaulters_desc: 'Students with fees dues'
+        fees_create:
+          fees_create: 'Fees Create'
+          master_fees_and_additional_fees: 'Master Fees and Additional Fees'
+          master_fees: 'Master Fees'
+          master_fees_desc: 'Creates Master Fees'
+          additional_fees: 'Additional Fees'
+          additional_fees_desc: 'Creates Additional Fees'
+        master_fees:
+          master_category: 'Master Category'
+          finance_management: 'Finance Management'
+          create_category: 'Create Category'
+          create_category_desc: 'Creates Master Category'
+          create_particulars: 'Create Particulars'
+          create_particulars_desc: 'Create Particulars'
+        _master_category_list:
+          s1_no: 'Sl no'
+          fees_name: 'Fees Name'
+          batch_name: 'Batch Name'
+          created_date: 'Created Date'
+          delete: 'Delete'
+          edit: 'Edit'
+          no_categories_to_display: 'No Categories to display'
+        additional_fees:
+          fees: 'Fees'
+          additional_fees: 'Additional Fees'
+          create: 'Create'
+          create_desc: 'Creates Additional fees'
+          view: 'View'
+          view_desc: 'View Additional Fees'
