@@ -11,6 +11,15 @@
   <% unless flash[:notice].nil? %>
   <p class="flash-msg"><%= flash[:notice] %>  </p>
 <% end %>
+
+  <% unless flash[:maximum].nil? %>
+  <p class="flash-msg"><%= flash[:maximum] %></p>
+  <% end %>
+
+  <% unless flash[:minimum].nil? %>
+  <p class="flash-msg"><%= flash[:minimum] %></p>
+  <% end %>
+
     <div class="box">
       <%=  error_messages_for :expense %>
   <%= render :partial => "transaction_create_form" %>

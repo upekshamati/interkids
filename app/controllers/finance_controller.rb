@@ -45,7 +45,22 @@ class FinanceController < ApplicationController
     end
     if request.post? and @expense.save
       flash[:notice] = "Expense has been added to the accounts."
+      check_maximum_minimum_cash(1.day.ago)
     end
+  end
+  
+  def check_maximum_minimum_cash(start_day = Time.now, end_day = Time.now)
+    amount = FinanceTransaction.sum(:amount, 
+                                    :joins => :category, 
+                                    :conditions => ["finance_transaction_categories.is_income = ? AND " +
+                                                    "created_at >= ? AND " +
+                                                    "created_at <= ?", 
+                                                    false, 
+                                                    start_day.beginning_of_day, 
+                                                    end_day.at_midnight] )
+    
+    flash[:maximum] = "Amount (#{amount}) in cash is overload." if amount >= 4000
+    flash[:minimum] = "Amount (#{amount}) in cash is underload." if amount <= 1000
   end
 
   def expense_edit
@@ -64,6 +79,7 @@ class FinanceController < ApplicationController
     end
     if request.post? and @income.save
       flash[:notice] = "Income has been added to the accounts."
+      check_maximum_minimum_cash(1.day.ago)
     end
   end
 
