@@ -58,9 +58,12 @@ class FinanceController < ApplicationController
                                                     false, 
                                                     start_day.beginning_of_day, 
                                                     end_day.at_midnight] )
+  
+    max_limit = Configuration.get_config_value('MaximumCashLimit')
+    min_limit = Configuration.get_config_value('MinimumCashLimit')
     
-    flash[:maximum] = "Amount (#{amount}) in cash is overload." if amount >= 4000
-    flash[:minimum] = "Amount (#{amount}) in cash is underload." if amount <= 1000
+    flash[:maximum] = "Amount (#{amount}) in cash is overload." if amount >= max_limit
+    flash[:minimum] = "Amount (#{amount}) in cash is underload." if amount <= min_limit
   end
 
   def expense_edit
