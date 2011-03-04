@@ -1,5 +1,7 @@
 class FinanceTransaction < ActiveRecord::Base
-  belongs_to :category, :class_name => 'FinanceTransactionCategory', :foreign_key => 'category_id'
+  belongs_to :category, 
+             :class_name => 'FinanceTransactionCategory', 
+             :foreign_key => 'category_id'
   belongs_to :student
   cattr_reader :per_page
   validates_presence_of :title,:amount
