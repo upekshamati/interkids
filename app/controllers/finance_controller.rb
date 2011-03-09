@@ -59,11 +59,32 @@ class FinanceController < ApplicationController
                                                     start_day.beginning_of_day, 
                                                     end_day.at_midnight] )
   
-    max_limit = Configuration.get_config_value('MaximumCashLimit')
-    min_limit = Configuration.get_config_value('MinimumCashLimit')
-    
-    flash[:maximum] = "Amount (#{amount}) in cash is overload." if amount >= max_limit
-    flash[:minimum] = "Amount (#{amount}) in cash is underload." if amount <= min_limit
+    max_limit = Configuration.get_config_value('MaximumCashLimit').to_i
+    min_limit = Configuration.get_config_value('MinimumCashLimit').to_i
+
+    unless (min_limit..max_limit).include? amount 
+      if amount > max_limit
+        body = "<p>Cash limit is overload<br />Amount #{amount}.<br />"
+        subject = "Cash limit is overload"
+        flash[:maximum] = "Amount (#{amount}) in cash is overload."
+      else
+        body = "<p>Cash limit is underload<br />Amount #{amount}.<br />"
+        subject = "Cash limit is underload"
+        flash[:minimum] = "Amount (#{amount}) in cash is underload."
+      end
+
+      admins = User.all(:conditions => {:admin => true} )
+
+      admins.each do |admin|
+        Reminder.create(:sender => current_user.id,
+                        :recipient=> admin.id,
+                        :subject=> subject,
+                        :body => body,
+                        :is_read => false,
+                        :is_deleted_by_sender => false,
+                        :is_deleted_by_recipient => false)
+      end
+    end
   end
 
   def expense_edit
