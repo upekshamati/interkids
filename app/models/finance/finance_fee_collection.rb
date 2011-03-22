@@ -2,6 +2,9 @@ class FinanceFeeCollection < ActiveRecord::Base
   belongs_to :batch
   has_many :finance_fees
   belongs_to :fee_category,:class_name => "FinanceFeeCategory"
+  has_many   :fee_particulars, 
+             :class_name => "FinanceFeeParticulars", 
+             :foreign_key => 'finance_fee_collection_id'
 
   validates_presence_of :name,:start_date,:fee_category_id,:end_date,:due_date
 
