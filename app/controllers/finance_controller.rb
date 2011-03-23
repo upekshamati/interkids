@@ -884,7 +884,7 @@ class FinanceController < ApplicationController
     @due_date = @fee_collection.due_date
    
     @fee_category = FinanceFeeCategory.find(@fee_collection.fee_category_id,:conditions => ["is_deleted = false"])
-    @fee_particulars = @fee_category.fees(@student)
+    @fee_particulars = FinanceFeeParticulars.fees(@fee_collection, @fee_category, @student)
 
     render :update do |page|
       page.replace_html "student", :partial => "student_fees_submission"

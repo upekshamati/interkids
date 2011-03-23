@@ -29,7 +29,7 @@
     </div>
 
 <% total_fees =0 %>
-<% form_remote_for :fees, :url => {:action => 'update_ajax',:student => @student.id,:batch_id => @batch.id,:date => @date.id, :fine=>@fine} do |form| %>
+<% form_remote_for :fees, :url => {:action => 'update_ajax',:fee_collection => @fee_collection.id, :student => @student.id,:batch_id => @batch.id,:date => @date.id, :fine=>@fine} do |form| %>
   <% unless @fee_particulars.nil? %>
     <table id="listing" align="center" width="100%" cellpadding="1" cellspacing="1">
       <tr class="tr-head">
