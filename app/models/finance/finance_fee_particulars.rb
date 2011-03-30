@@ -32,4 +32,8 @@ class FinanceFeeParticulars < ActiveRecord::Base
                         ])
   end
 
+  def can_print_receipt?
+    self.amount < 0
+  end
+
 end

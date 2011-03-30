@@ -1,5 +1,5 @@
 class FinanceController < ApplicationController
-  before_filter :login_required,:configuration_settings_for_finance
+  before_filter :login_required, :configuration_settings_for_finance
   filter_access_to :all
 
   def index
@@ -945,14 +945,29 @@ class FinanceController < ApplicationController
     transaction.title = "Recipit No. #{part.id}" 
     transaction.save
 
-
-
     @financefee.update_attribute(:transaction_id, transaction.id)
 
     render :update do |page|
       page.replace_html "student", :partial => "student_fees_submission"
     end
 
+  end
+
+  def student_fee_particular_receipt_pdf
+    @particular = FinanceFeeParticulars.find(params[:id])
+    @student = Student.find_by_admission_no(@particular.admission_no)
+
+    collection = FinanceFeeCollection.find(@particular.finance_fee_collection_id)
+    category = FinanceFeeCategory.find(@particular.finance_fee_category_id)
+
+    fees = FinanceFeeParticulars.fees(collection, category, @student)
+
+    @total_left_to_pay = 0
+    fees.each { |f| @total_left_to_pay += f.amount }
+
+    respond_to do |format|
+      format.pdf { render :layout => false }
+    end
   end
 
   def student_fee_receipt_pdf

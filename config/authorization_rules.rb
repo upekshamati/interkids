@@ -1134,6 +1134,7 @@ authorization do
         :graph_for_compare_monthly_report,
         :update_fine_ajax,
         :student_fee_receipt_pdf,
+        :student_fee_particular_receipt_pdf,
         :update_student_fine_ajax,
         :transaction_pdf,
         :update_defaulters_fine_ajax,
