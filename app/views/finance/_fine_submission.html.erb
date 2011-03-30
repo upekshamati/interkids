@@ -1,4 +1,4 @@
-<% if @due_date.to_date < Date.today %>
+<% if @fee_collection.due_date.to_date < Date.today %>
 
 <% form_remote_for :fine, :url => {:action => 'update_fine_ajax' } do |form| %>
 <div class="fine_info">

@@ -591,12 +591,11 @@ class FinanceController < ApplicationController
 
   def fees_particulars_create
     @finance_fee_particulars = FinanceFeeParticulars.new(params[:finance_fee_particulars])
-    unless @finance_fee_particulars.save
-      @error = true
-    end
-    @finance_fee_category = FinanceFeeCategory.find( @finance_fee_particulars .finance_fee_category_id)
-    @particulars = FinanceFeeParticulars.paginate(:page => params[:page],:conditions => ["is_deleted = '#{false}' and finance_fee_category_id = '#{@finance_fee_category.id}' "])
+    @error = true unless @finance_fee_particulars.save
 
+    @finance_fee_category = FinanceFeeCategory.find( @finance_fee_particulars .finance_fee_category_id)
+    @particulars = FinanceFeeParticulars.paginate(:page => params[:page],
+                                                  :conditions => ["is_deleted = '#{false}' and finance_fee_category_id = '#{@finance_fee_category.id}' "])
   end
 
   def additional_fees_create_form
@@ -808,11 +807,21 @@ class FinanceController < ApplicationController
             "check your  <a href='../../finance/student_fees_structure/#{s.id}/#{@finance_fee_collection.id}'>Fee structure</a> <br/><br/><br/>
                                regards,<br/>"+@user.full_name.capitalize
 
-          FinanceFee.create(:student_id => s.id,:fee_collection_id => @finance_fee_collection.id)
-          Reminder.create(:sender=>@user.id, :recipient=>s.student_user, :subject=> subject,
-            :body => body, :is_read=>false, :is_deleted_by_sender=>false,:is_deleted_by_recipient=>false)
+          FinanceFee.create(:student_id => s.id,
+                            :fee_collection_id => @finance_fee_collection.id)
+          Reminder.create(:sender=>@user.id,
+                          :recipient=>s.student_user,
+                          :subject=> subject,
+                          :body => body,
+                          :is_read=>false,
+                          :is_deleted_by_sender=>false,
+                          :is_deleted_by_recipient=>false)
        end
-          Event.create(:title=> "Fees Due", :description =>fee_category.name, :start_date => @finance_fee_collection.due_date, :end_date => @finance_fee_collection.due_date, :is_due => true)
+          Event.create(:title=> "Fees Due", 
+                       :description =>fee_category.name,
+                       :start_date => @finance_fee_collection.due_date,
+                       :end_date => @finance_fee_collection.due_date,
+                       :is_due => true)
         
       else
         @error = true
@@ -901,33 +910,47 @@ class FinanceController < ApplicationController
     @prev_student = @student.previous_student
     @next_student = @student.next_student
 
-    total_fees =0
+    total_fees = 0
+
+    fees_to_pay = BigDecimal.new(params[:fees_to_pay])
 
     @financefee = @student.finance_fee_by_date @date
     @fee_collection = FinanceFeeCollection.find(params[:date])
-    @fee_category = FinanceFeeCategory.find(@fee_collection.fee_category_id,:conditions => ["is_deleted IS NOT NULL"])
+    @fee_category = FinanceFeeCategory.find(@fee_collection.fee_category_id,
+                                            :conditions => ["is_deleted IS NOT NULL"])
     @fee_particulars = @fee_category.fees(@student)
-    @fee_particulars.each do |p|
-      total_fees += p.amount
-    end
-    unless params[:fine].nil?
-      total_fees += params[:fine].to_f
-    end
+    @fee_particulars.each { |p| total_fees += p.amount }
+    total_fees += params[:fine].to_f unless params[:fine].nil?
        
     transaction = FinanceTransaction.new
-    transaction.title = "Recipit No. F#{@financefee.id}"
     transaction.category = FinanceTransactionCategory.find_by_name("Fee")
     transaction.student_id = params[:student]
-    transaction.amount = total_fees
-    transaction.fine_included = true  unless params[:fine].nil?
+    transaction.amount = fees_to_pay
+    transaction.fine_included = !params[:fine].nil?
     transaction.finance_fees_id = @financefee.id
     transaction.save
+
+    s = Student.find(params[:student])
+    collection = FinanceFeeCollection.find(params[:fee_collection])
+    part = FinanceFeeParticulars.new(:name => 'Abono', 
+                                     :description => "Abono de #{fees_to_pay}", 
+                                     :amount => -fees_to_pay,
+                                     :finance_fee_category_id => @fee_category.id, 
+                                     :admission_no => s.admission_no, 
+                                     :is_deleted => false, 
+                                     :created_at => Time.now,
+                                     :finance_fee_collection_id => collection.id)
+    part.save
+
+    transaction.title = "Recipit No. #{part.id}" 
+    transaction.save
+
+
 
     @financefee.update_attribute(:transaction_id, transaction.id)
 
     render :update do |page|
       page.replace_html "student", :partial => "student_fees_submission"
-      
     end
 
   end

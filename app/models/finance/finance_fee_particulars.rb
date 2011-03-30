@@ -23,7 +23,7 @@ class FinanceFeeParticulars < ActiveRecord::Base
                          "AND "\
                          "(finance_fee_category_id = ?) " \
                          "AND "\
-                         "(finance_fee_collection_id = ?) ", 
+                         "(finance_fee_collection_id IS NULL OR finance_fee_collection_id = ?) ", 
                          false,                            # is_deleted
                          student.student_category_id,      # student_category_id
                          student.admission_no,             # admission_no
