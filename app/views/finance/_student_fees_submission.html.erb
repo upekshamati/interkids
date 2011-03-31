@@ -18,7 +18,7 @@
 <br />
 
 <%if @financefee.transaction_id.nil?%>
-      <%= render :partial => "fine_submission" %>
+  <%= render :partial => "fine_submission" %>
 <% end %>
 
 <div id="register">
@@ -53,7 +53,7 @@
                             :batch_id => @batch.id, 
                             :date => @fee_collection.id, 
                             :fine=>@fine} do |form| %>
-  <% unless @fee_particulars.nil? %>
+  <% if @fee_particulars %>
     <table id="listing" align="center" width="100%" cellpadding="1" cellspacing="1">
       <tr class="tr-head">
         <td>Sl no.</td>
@@ -63,6 +63,7 @@
       </tr>
       <tr class="tr-blank">
       </tr>
+
       <% @fee_particulars.each_with_index do |fee,i| %>
         <tr class="tr-<%= cycle("odd","even") %>">
 	<td class="col-1"><%= i+1 %></td>
@@ -79,7 +80,7 @@
 	<% total_fees += fee.amount %>
       <% end %>
 
-      <% unless @fine.nil? %>
+      <% if @fine %>
         <tr class="tr-<%= cycle("odd","even") %>">
           <td class="col-1"><%= @fee_particulars.size+1 %></td>
           <td class="col-2">Fine</td>
@@ -88,16 +89,13 @@
         <% total_fees += @fine.to_f %>
       <% end %>
 
-      <% unless @financefee.transaction_id.nil? %>
-        <% @trans = FinanceTransaction.find(@financefee.transaction_id) %>
-        <% if @trans.fine_included %>
-          <tr class="tr-<%= cycle("odd","even") %>">
-            <td class="col-1"><%= @fee_particulars.size+1 %></td>
-            <td class="col-2">Fine</td>
-            <td class="col-6"><%= @trans.amount.to_f-total_fees %></td>
-          </tr>
-          <% total_fees = @trans.amount.to_f %>
-        <% end %>
+      <% if @financefee.transaction && @financefee.transaction.fine_included %>
+        <tr class="tr-<%= cycle("odd","even") %>">
+	  <td class="col-1"><%= @fee_particulars.size+1 %></td>
+	  <td class="col-2">Fine</td>
+	  <td class="col-6"><%= @financefee.transaction.amount.to_f-total_fees %></td>
+	</tr>
+	<% total_fees = @financefee.transaction.amount.to_f %>
       <% end %>
 
       <tr class="tr-blank"></tr>
@@ -105,7 +103,7 @@
       <tr class="tr-<%= cycle("odd","even") %>" cellpadding="1" cellspacing="1">
         <td class="col-1" >Total Fees</td>
         <td class="col-1" ></td>
-        <td class="col-6" ><%= total_fees%></td>
+        <td class="col-6" ><%= total_fees %></td>
       </tr>
 
       <p>
