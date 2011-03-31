@@ -881,19 +881,29 @@ class FinanceController < ApplicationController
     
     @batch   = Batch.find(params[:batch_id])
     @dates   = FinanceFeeCollection.find(:all)
-    @date    = FinanceFeeCollection.find(params[:date])
     @student = Student.find(params[:student]) if params[:student]
+    @fee_collection = FinanceFeeCollection.find(params[:date])
+    logger.debug "FinanceCollection found\t#{@fee_collection.inspect}"
 
     @student ||= @batch.students.first
     @prev_student = @student.previous_student
     @next_student = @student.next_student
 
-    @financefee = @student.finance_fee_by_date @date
-    @fee_collection = FinanceFeeCollection.find(params[:date])
-    @due_date = @fee_collection.due_date
+    # Search finance fee
+    @financefee = FinanceFee.first(:conditions => ["fee_collection_id = ? AND student_id = ?", 
+                                                   @fee_collection.id, 
+                                                   @student.id])
+    logger.debug "FinanceFee found\t#{@financefee.inspect}"
    
-    @fee_category = FinanceFeeCategory.find(@fee_collection.fee_category_id,:conditions => ["is_deleted = false"])
-    @fee_particulars = FinanceFeeParticulars.fees(@fee_collection, @fee_category, @student)
+    # Search fee particulars
+    if @fee_collection.fee_category && !@fee_collection.fee_category.is_deleted
+      @fee_particulars = FinanceFeeParticulars.fees(@fee_collection, 
+                                                    @fee_collection.fee_category, 
+                                                    @student)
+    else
+      @fee_particulars = nil
+    end
+    logger.debug "FeeParticulars found\t#{@fee_particulars.inspect}"
 
     render :update do |page|
       page.replace_html "student", :partial => "student_fees_submission"
