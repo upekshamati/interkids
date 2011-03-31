@@ -30,6 +30,7 @@ pdf.text "Fee Reciept" , :size => 14 ,:align => :center
 pdf.move_down(20)
 pdf.text "Name : #{@student.full_name}" , :size => 11
 pdf.text "Admission no : #{@particular.admission_no}" , :size => 11
+pdf.text "Payment : #{@collection.name}" , :size => 11
 pdf.text "Amount paid : #{@particular.amount * -1}" , :size => 11
 pdf.text "Total left : #{@total_left_to_pay}" , :size => 11
 

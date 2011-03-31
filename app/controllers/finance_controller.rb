@@ -957,10 +957,10 @@ class FinanceController < ApplicationController
     @particular = FinanceFeeParticulars.find(params[:id])
     @student = Student.find_by_admission_no(@particular.admission_no)
 
-    collection = FinanceFeeCollection.find(@particular.finance_fee_collection_id)
+    @collection = FinanceFeeCollection.find(@particular.finance_fee_collection_id)
     category = FinanceFeeCategory.find(@particular.finance_fee_category_id)
 
-    fees = FinanceFeeParticulars.fees(collection, category, @student)
+    fees = FinanceFeeParticulars.fees(@collection, category, @student)
 
     @total_left_to_pay = 0
     fees.each { |f| @total_left_to_pay += f.amount }
