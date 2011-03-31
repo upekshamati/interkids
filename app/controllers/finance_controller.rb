@@ -912,50 +912,53 @@ class FinanceController < ApplicationController
 
   def update_ajax
 
-    @batch   = Batch.find(params[:batch_id])
-    @dates = FinanceFeeCollection.find(:all)
-    @date = FinanceFeeCollection.find(params[:date])
+    @batch = Batch.find(params[:batch_id])
     @student = Student.find(params[:student]) if params[:student]
     @student ||= @batch.students.first
     @prev_student = @student.previous_student
     @next_student = @student.next_student
+    @fee_collection = FinanceFeeCollection.find(params[:fee_collection])
 
     total_fees = 0
 
     fees_to_pay = BigDecimal.new(params[:fees_to_pay])
 
-    @financefee = @student.finance_fee_by_date @date
-    @fee_collection = FinanceFeeCollection.find(params[:date])
-    @fee_category = FinanceFeeCategory.find(@fee_collection.fee_category_id,
-                                            :conditions => ["is_deleted IS NOT NULL"])
-    @fee_particulars = @fee_category.fees(@student)
-    @fee_particulars.each { |p| total_fees += p.amount }
-    total_fees += params[:fine].to_f unless params[:fine].nil?
-       
-    transaction = FinanceTransaction.new
-    transaction.category = FinanceTransactionCategory.find_by_name("Fee")
-    transaction.student_id = params[:student]
-    transaction.amount = fees_to_pay
-    transaction.fine_included = !params[:fine].nil?
-    transaction.finance_fees_id = @financefee.id
-    transaction.save
+    # Search finance fee
+    @financefee = FinanceFee.first(:conditions => ["fee_collection_id = ? AND student_id = ?", 
+                                                   @fee_collection.id, 
+                                                   @student.id])
+    logger.debug "FinanceFee found\t#{@financefee.inspect}"
 
-    s = Student.find(params[:student])
-    collection = FinanceFeeCollection.find(params[:fee_collection])
-    part = FinanceFeeParticulars.new(:name => 'Abono', 
-                                     :description => "Abono de #{fees_to_pay}", 
-                                     :amount => -fees_to_pay,
-                                     :finance_fee_category_id => @fee_category.id, 
-                                     :admission_no => s.admission_no, 
-                                     :is_deleted => false, 
-                                     :created_at => Time.now,
-                                     :finance_fee_collection_id => collection.id)
-    part.save
+    if @fee_collection.fee_category
+      @fee_particulars = @fee_collection.fee_category.fees(@student)
+      @fee_particulars.each { |p| total_fees += p.amount }
+      total_fees += params[:fine].to_f unless params[:fine].nil?
 
-    transaction.title = "Recipit No. #{part.id}" 
-    transaction.save
+      transaction = FinanceTransaction.new
+      transaction.category        = FinanceTransactionCategory.find(3)
+      transaction.student         = @student
+      transaction.amount          = fees_to_pay
+      transaction.fine_included   = !params[:fine].nil?
+      transaction.finance_fees_id = @financefee.id
+      transaction.save
 
-    @financefee.update_attribute(:transaction_id, transaction.id)
+      part = FinanceFeeParticulars.new(:name                      => 'Abono', 
+                                       :description               => "Abono de #{fees_to_pay}", 
+                                       :amount                    => -fees_to_pay,
+                                       :finance_fee_category_id   => @fee_collection.fee_category.id, 
+                                       :admission_no              => @student.admission_no, 
+                                       :is_deleted                => false, 
+                                       :created_at                => Time.now,
+                                       :finance_fee_collection_id => @fee_collection.id)
+      part.save
+
+      transaction.title = "Recipit No. #{part.id}" 
+      transaction.save
+
+      @financefee.update_attribute(:transaction_id, transaction.id)
+    else 
+      @fee_particulars = nil
+    end
 
     render :update do |page|
       page.replace_html "student", :partial => "student_fees_submission"

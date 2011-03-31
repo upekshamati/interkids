@@ -1,9 +1,11 @@
-<div class="name">Fees Receipt Number</div>
-<div class="val">
-  <span>:</span>F<%= @financefee.id %>
-</div>
+<% if @financefee %>
+  <div class="name">Fees Receipt Number</div>
+  <div class="val">
+    <span>:</span>F<%= @financefee.id %>
+  </div>
+<% end %>
 
-<% unless @fee_collection.fee_category.nil? %>
+<% if @fee_collection.fee_category %>
   <div class="name">Fee Category Name</div>
   <div class="val">
     <span>:</span><%= @fee_collection.fee_category.name %>
@@ -17,9 +19,7 @@
 
 <br />
 
-<%if @financefee.transaction_id.nil?%>
-  <%= render :partial => "fine_submission" %>
-<% end %>
+<%= render :partial => "fine_submission" unless @financefee.transaction %>
 
 <div id="register">
   <div class="header">
@@ -49,10 +49,10 @@
 <% form_remote_for :fees, 
                    :url => {:action => 'update_ajax',
                             :fee_collection => @fee_collection.id, 
-                            :student => @student.id,
-                            :batch_id => @batch.id, 
+                            :student => @student,
+                            :batch_id => @batch, 
                             :date => @fee_collection.id, 
-                            :fine=>@fine} do |form| %>
+                            :fine => @fine} do |form| %>
   <% if @fee_particulars %>
     <table id="listing" align="center" width="100%" cellpadding="1" cellspacing="1">
       <tr class="tr-head">
