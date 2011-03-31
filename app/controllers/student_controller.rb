@@ -60,6 +60,8 @@ class StudentController < ApplicationController
         @student.save
       end
       if @student.save
+
+        # Send id and password by SMS message
         sms_setting = SmsSetting.new()
         if sms_setting.application_sms_active and @student.is_sms_enabled
           recipients = []
@@ -72,6 +74,18 @@ class StudentController < ApplicationController
             sms.send_sms
           end
         end
+
+        # Add collections to new student
+        logger.debug "Adding collections to new student..."
+        collections = FinanceFeeCollection.all(:conditions => ["batch_id = ? AND start_date >= ? AND is_deleted = ?", @student.batch, @student.admission_date, false] )
+        collections.each do |c|
+          logger.debug "Adding collection #{c.id} to student #{@student.id}"
+          fee = FinanceFee.new(:student => @student)
+          fee.fee_collection_id = c.id
+          fee.save
+        end
+
+
         flash[:notice] = "Student Record Saved Successfully. Please fill the Parent Details."
         redirect_to :controller => "student", :action => "admission2", :id => @student.id
       end
