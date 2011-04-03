@@ -1,6 +1,8 @@
 class FinanceFeeCollection < ActiveRecord::Base
   belongs_to :batch
-  has_many :finance_fees
+  #has_many :finance_fees
+  has_many   :finance_fees, 
+             :class_name => "FinanceFee"
   belongs_to :fee_category,:class_name => "FinanceFeeCategory"
   has_many   :fee_particulars, 
              :class_name => "FinanceFeeParticulars", 
@@ -9,7 +11,7 @@ class FinanceFeeCollection < ActiveRecord::Base
   validates_presence_of :name,:start_date,:fee_category_id,:end_date,:due_date
 
   def full_name
-    "#{name} - #{start_date.to_s}"
+    "#{name} - (#{start_date.to_s} - #{end_date.to_s})"
   end
 
   def fee_transactions(student_id)

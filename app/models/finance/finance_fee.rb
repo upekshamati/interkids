@@ -1,6 +1,10 @@
 class FinanceFee < ActiveRecord::Base
 
-  belongs_to :finance_fee_collection
+  #belongs_to :finance_fee_collection
+  belongs_to :fee_collection, 
+             :class_name => "FinanceFeeCollection", 
+             :foreign_key => 'id'
+
   belongs_to :transaction, :class_name => 'FinanceTransaction'
   has_many :components, :class_name => 'FinanceFeeComponent', :foreign_key => 'fee_id'
   belongs_to :student
