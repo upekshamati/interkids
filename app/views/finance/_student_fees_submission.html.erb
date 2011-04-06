@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 <% if @financefee %>
   <div class="name">Fees Receipt Number</div>
   <div class="val">
@@ -108,8 +110,9 @@
 
       <p>
         <%if total_fees > 0 %>
-          <%= submit_tag "► Pay Fees",:class=>'submit_button' %>
-	  <%= text_field_tag 'fees_to_pay', total_fees %>
+          <%= submit_tag "► Pay Fees", :class=>'submit_button', :confirm => 'Are you sure to submit payment?' %>
+	  <%= text_field :transaction, :amount, :value => total_fees %>
+	  <%= select :transaction, :payment_form, [['Cash',1],['Check',2],['Electronic transfer',3],['Debit card',4],['Credit card',5]] %>
         <%end%>
 	
         <% if total_fees == 0 %>

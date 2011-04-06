@@ -914,8 +914,6 @@ class FinanceController < ApplicationController
 
     total_fees = 0
 
-    fees_to_pay = BigDecimal.new(params[:fees_to_pay])
-
     # Search finance fee
     @financefee = FinanceFee.find_by_fee_collection_id_and_student_id(@fee_collection, @student)
     logger.debug "FinanceFee found\t#{@financefee.inspect}"
@@ -928,14 +926,15 @@ class FinanceController < ApplicationController
       transaction = FinanceTransaction.new
       transaction.category        = FinanceTransactionCategory.find(3)
       transaction.student         = @student
-      transaction.amount          = fees_to_pay
+      transaction.amount          = params[:transaction][:amount]
       transaction.fine_included   = !params[:fine].nil?
       transaction.finance_fees_id = @financefee.id
+      transaction.payment_form    = params[:transaction][:payment_form]
       transaction.save
 
       part = FinanceFeeParticulars.new(:name                      => 'Abono', 
-                                       :description               => "Abono de #{fees_to_pay}", 
-                                       :amount                    => -fees_to_pay,
+                                       :description               => "Abono de #{transaction.amount}", 
+                                       :amount                    => -transaction.amount,
                                        :finance_fee_category_id   => @fee_collection.fee_category.id, 
                                        :admission_no              => @student.admission_no, 
                                        :is_deleted                => false, 
