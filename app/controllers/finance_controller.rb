@@ -95,15 +95,18 @@ class FinanceController < ApplicationController
     end
   end
   def income_create
-    flash[:notice]=nil
-    @income = FinanceTransaction.new(params[:transaction])
+    @transaction = FinanceTransaction.new(params[:transaction])
     @categories = FinanceTransactionCategory.income_categories
+    @payment_forms = PaymentForm.all
+    @students = Student.all
+
     if @categories.empty?
       flash[:notice] = "Please create category for income!"
     end
-    if request.post? and @income.save
+    if request.post? and @transaction.save
       flash[:notice] = "Income has been added to the accounts."
       check_maximum_minimum_cash(1.day.ago)
+      @transaction = FinanceTransaction.new
     end
   end
 
@@ -883,6 +886,7 @@ class FinanceController < ApplicationController
     @student ||= @batch.students.first
     @prev_student = @student.previous_student
     @next_student = @student.next_student
+    logger.debug "Student found\t#{@student.inspect}"
 
     # Search finance fee
     @financefee = FinanceFee.find_by_fee_collection_id_and_student_id(@fee_collection, @student)
@@ -897,6 +901,8 @@ class FinanceController < ApplicationController
       @fee_particulars = nil
     end
     logger.debug "FeeParticulars found\t#{@fee_particulars.inspect}"
+
+    @payment_forms = PaymentForm.all
 
     render :update do |page|
       page.replace_html "student", :partial => "student_fees_submission"

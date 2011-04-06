@@ -1,25 +1,50 @@
-<% form_for :transaction do |form| %>
+<% form_for :transaction do |f| %>
   <div id="create_user_form">
-    
-      <div class="label-field-pair">
-        <label for="title">Title </label>
-        <div class="text-field-bg"><%= form.text_field :title %> </div>
-      </div>
-      <div class="label-field-pair">
-        <label for="description">Description </label>
-        <div class="text-field-bg"><%= form.text_field :description %> </div>
-      </div>
 
+    <%= f.error_messages %>
 
-      <div class="label-field-pair">
-        <label for="amount">Amount</label>
-        <div class="text-field-bg"><%= form.text_field :amount %> </div>
+    <div class="label-field-pair">
+      <%= f.label :student_id %>
+      <div class="text-input-bg">
+	<%= f.select :student_id, options_from_collection_for_select(@students, :id, :full_name), :prompt => 'Select a student' %>
       </div>
-      <div class="label-field-pair">
-        <label for="category">Category</label>
-        <div class="text-input-bg"><%= select :transaction, :category_id, @categories.map { |c| [c.name, c.id] },:prompt=>'Select a category' %></div>
-      </div>
+    </div>
 
-       <%=  submit_tag "► Save",:class=>'submit_button' %>
+    <div class="label-field-pair">
+      <%= f.label :title %>
+      <div class="text-field-bg">
+        <%= f.text_field :title %>
+      </div>
+    </div>
+
+    <div class="label-field-pair">
+      <%= f.label :description %>
+      <div class="text-field-bg">
+	<%= f.text_field :description %>
+      </div>
+    </div>
+
+    <div class="label-field-pair">
+      <%= f.label :amount %>
+      <div class="text-field-bg">
+	<%= f.text_field :amount %>
+      </div>
+    </div>
+
+    <div class="label-field-pair">
+      <%= f.label :payment_form %>
+      <div class="text-input-bg">
+	<%= f.select :payment_form, options_from_collection_for_select(@payment_forms, :id, :name), :prompt => 'Select a payment form' %>
+      </div>
+    </div>
+
+    <div class="label-field-pair">
+      <%= f.label :category_id %>
+      <div class="text-input-bg">
+	<%= f.select :category_id, options_from_collection_for_select(@categories, :id, :name), :prompt => 'Select a category' %>
+      </div>
+    </div>
+
+    <%= f.submit "► Save", :class=>'submit_button' %>
   </div>
 <% end %>

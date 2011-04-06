@@ -7,9 +7,10 @@ class FinanceTransaction < ActiveRecord::Base
              :class_name => 'PaymentForm', 
              :foreign_key => 'payment_form_id'
   cattr_reader :per_page
-  validates_presence_of :title,:amount
-  validates_presence_of :payment_form
-  validates_numericality_of :amount
+
+  # Validators
+  validates_presence_of :title,:amount, :payment_form
+  validates_numericality_of :amount, :greater_than => 0
 
   def self.report(start_date,end_date,page)
     paginate :per_page =>5 ,:page => page,
