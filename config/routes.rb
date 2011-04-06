@@ -1,4 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :payment_forms
+
 
   map.resources :grading_levels
   map.resources :class_timings

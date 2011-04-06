@@ -3,6 +3,9 @@ class FinanceTransaction < ActiveRecord::Base
              :class_name => 'FinanceTransactionCategory', 
              :foreign_key => 'category_id'
   belongs_to :student
+  belongs_to :payment_form,
+             :class_name => 'PaymentForm', 
+             :foreign_key => 'payment_form_id'
   cattr_reader :per_page
   validates_presence_of :title,:amount
   validates_presence_of :payment_form

@@ -1,0 +1,19 @@
+cash:
+  id: 1
+  name: 'Cash'
+
+check:
+  id: 2
+  name: 'Check'
+
+transfer:
+  id: 3
+  name: 'Transfer'
+
+debit_card:
+  id: 4
+  name: 'Debit Card'
+
+credit_card:
+  id: 5
+  name: 'Credit Card'
