@@ -765,11 +765,8 @@ class FinanceController < ApplicationController
   def fee_collection_batch_update
     @fee_category = FinanceFeeCategory.find(params[:id])
     @batch_ids = @fee_category.batch(&:id)
-    unless @batch_ids.nil?
-      @batchs = Batch.find_all_by_id @batch_ids
-    else
-      @batchs = Batch.active
-    end
+    @batchs = @batch_ids.nil? ? Batch.active : Batch.find_all_by_id(@batch_ids)
+
     render :update do |page|
       page.replace_html "batchs" ,:partial => "fee_collection_batchs"
     end
@@ -777,26 +774,24 @@ class FinanceController < ApplicationController
   end
 
   def fee_collection_new
-    @fee_categories = FinanceFeeCategory.find(:all , :conditions => ["is_master = '#{1}' and is_deleted = '#{false}'"])
+    @fee_categories = FinanceFeeCategory.find_all_by_is_master_and_is_deleted(1, false)
     @finance_fee_collection = FinanceFeeCollection.new
   end
 
   def fee_collection_create
     @user = current_user
     fee_category = FinanceFeeCategory.find(params[:finance_fee_collection][:fee_category_id])
-    batchs =[]
+    batchs = []
     batchs = params[:fee_collection][:batch_ids]
     subject = "Fees submission date"
        
     batchs.each do |b|
-      @finance_fee_collection = FinanceFeeCollection.new(
-        :name => params[:finance_fee_collection][:name],
-        :start_date => params[:finance_fee_collection][:start_date],
-        :end_date => params[:finance_fee_collection][:end_date],
-        :due_date => params[:finance_fee_collection][:due_date],
-        :fee_category_id => fee_category.id,
-        :batch_id => b
-      )
+      @finance_fee_collection = FinanceFeeCollection.new(:name            => params[:finance_fee_collection][:name],
+                                                         :start_date      => params[:finance_fee_collection][:start_date],
+                                                         :end_date        => params[:finance_fee_collection][:end_date],
+                                                         :due_date        => params[:finance_fee_collection][:due_date],
+                                                         :fee_category_id => fee_category.id,
+                                                         :batch_id => b )
       if @finance_fee_collection.save
         @students = Student.find_all_by_batch_id(b)
         @students.each do |s|
@@ -843,19 +838,19 @@ class FinanceController < ApplicationController
   end
 
   def fee_collection_edit
-    @finance_fee_collection = FinanceFeeCollection.find params[:id]
+    @finance_fee_collection = FinanceFeeCollection.find(params[:id])
   end
   
   def fee_collection_update
-    @finance_fee_collection = FinanceFeeCollection.find params[:id]
+    @finance_fee_collection = FinanceFeeCollection.find(params[:id])
     flash[:notice]="Fee Collection updated successfully" if @finance_fee_collection.update_attributes(params[:fee_collection]) if request.post?
-    @finance_fee_collections = FinanceFeeCollection.all(:conditions => ["is_deleted = '#{false}' and batch_id = '#{@finance_fee_collection.batch_id}'"])
+    @finance_fee_collections = FinanceFeeCollection.find_all_by_batch_id_and_is_deleted(@finance_fee_collection.batch_id, false)
   end
 
   def fee_collection_delete
-    @finance_fee_collection = FinanceFeeCollection.find params[:id]
+    @finance_fee_collection = FinanceFeeCollection.find(params[:id])
     @finance_fee_collection.update_attributes(:is_deleted => true)
-    @finance_fee_collections = FinanceFeeCollection.all(:conditions => ["is_deleted = '#{false}' and batch_id = '#{@finance_fee_collection.batch_id}'"])
+    @finance_fee_collections = FinanceFeeCollection.find_all_by_batch_id_and_is_deleted(@finance_fee_collection.batch_id, false)
   end
 
   #fees_submission-----------------------------------
@@ -890,9 +885,7 @@ class FinanceController < ApplicationController
     @next_student = @student.next_student
 
     # Search finance fee
-    @financefee = FinanceFee.first(:conditions => ["fee_collection_id = ? AND student_id = ?", 
-                                                   @fee_collection.id, 
-                                                   @student.id])
+    @financefee = FinanceFee.find_by_fee_collection_id_and_student_id(@fee_collection, @student)
     logger.debug "FinanceFee found\t#{@financefee.inspect}"
    
     # Search fee particulars
@@ -924,9 +917,7 @@ class FinanceController < ApplicationController
     fees_to_pay = BigDecimal.new(params[:fees_to_pay])
 
     # Search finance fee
-    @financefee = FinanceFee.first(:conditions => ["fee_collection_id = ? AND student_id = ?", 
-                                                   @fee_collection.id, 
-                                                   @student.id])
+    @financefee = FinanceFee.find_by_fee_collection_id_and_student_id(@fee_collection, @student)
     logger.debug "FinanceFee found\t#{@financefee.inspect}"
 
     if @fee_collection.fee_category
