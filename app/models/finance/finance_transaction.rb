@@ -5,6 +5,7 @@ class FinanceTransaction < ActiveRecord::Base
   belongs_to :student
   cattr_reader :per_page
   validates_presence_of :title,:amount
+  validates_presence_of :payment_form
   validates_numericality_of :amount
 
   def self.report(start_date,end_date,page)
