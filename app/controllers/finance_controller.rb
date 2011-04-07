@@ -96,9 +96,10 @@ class FinanceController < ApplicationController
   end
   def income_create
     @transaction = FinanceTransaction.new(params[:transaction])
+    logger.debug "FinanceTransaction found\t#{@transaction.inspect}"
     @categories = FinanceTransactionCategory.income_categories
     @payment_forms = PaymentForm.all
-    @students = Student.all
+    @batches = Batch.all
 
     if @categories.empty?
       flash[:notice] = "Please create category for income!"
@@ -107,6 +108,14 @@ class FinanceController < ApplicationController
       flash[:notice] = "Income has been added to the accounts."
       check_maximum_minimum_cash(1.day.ago)
       @transaction = FinanceTransaction.new
+    end
+  end
+    
+  def load_students_for_income
+    @students = Student.find_all_by_batch_id(params[:batch_id])
+
+    render :update do |page|
+      page.replace_html 'students_by_batch', :partial => 'load_students_for_income'
     end
   end
 

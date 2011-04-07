@@ -995,6 +995,7 @@ authorization do
         :fee_structure,
         :fees_student_specific,
         :income_create,
+        :load_students_for_income,
         :income_edit,
         :transactions,
         :category_create,

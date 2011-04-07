@@ -4,10 +4,19 @@
     <%= f.error_messages %>
 
     <div class="label-field-pair">
-      <%= f.label :student_id %>
+      <%= f.label :batches_id %>
       <div class="text-input-bg">
-	<%= f.select :student_id, options_from_collection_for_select(@students, :id, :full_name), :prompt => 'Select a student' %>
+	<%= select(:batch, 
+                   :id, 
+                   options_from_collection_for_select(@batches, :id, :name),
+                   {:prompt => 'Select a batch'},
+                   {:onChange => "#{remote_function(:url => {:action => 'load_students_for_income'}, :with => "'batch_id='+value")}" } ) %>
       </div>
+    </div>
+
+    <div class="label-field-pair">
+      <%= f.label :student_id %>
+      <div class="text-input-bg" id="students_by_batch"></div>
     </div>
 
     <div class="label-field-pair">
@@ -32,9 +41,9 @@
     </div>
 
     <div class="label-field-pair">
-      <%= f.label :payment_form %>
+      <%= f.label :payment_form_id %>
       <div class="text-input-bg">
-	<%= f.select :payment_form, options_from_collection_for_select(@payment_forms, :id, :name), :prompt => 'Select a payment form' %>
+	<%= f.select :payment_form_id, options_from_collection_for_select(@payment_forms, :id, :name), :prompt => 'Select a payment form' %>
       </div>
     </div>
 
