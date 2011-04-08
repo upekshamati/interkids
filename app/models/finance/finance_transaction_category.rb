@@ -3,6 +3,9 @@ class FinanceTransactionCategory < ActiveRecord::Base
   has_one  :trigger, 
            :class_name => "FinanceTransactionTrigger", 
            :foreign_key => "category_id"
+  belongs_to :cash_box,
+             :class_name => 'CashBox', 
+             :foreign_key => 'cash_box_id'
 
 
   validates_presence_of :name
