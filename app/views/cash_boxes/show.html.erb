@@ -1,0 +1,18 @@
+<p>
+  <b>Name:</b>
+  <%=h @cash_box.name %>
+</p>
+
+<p>
+  <b>Location:</b>
+  <%=h @cash_box.location %>
+</p>
+
+<p>
+  <b>Manager:</b>
+  <%=h @cash_box.manager %>
+</p>
+
+
+<%= link_to 'Edit', edit_cash_box_path(@cash_box) %> |
+<%= link_to 'Back', cash_boxes_path %>

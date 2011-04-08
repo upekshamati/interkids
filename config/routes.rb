@@ -1,7 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :cash_boxes
   map.resources :payment_forms
-
-
   map.resources :grading_levels
   map.resources :class_timings
   map.resources :subjects

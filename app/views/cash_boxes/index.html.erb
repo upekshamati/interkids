@@ -1,0 +1,24 @@
+<h1>Listing cash_boxes</h1>
+
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Location</th>
+    <th>Manager</th>
+  </tr>
+
+<% @cash_boxes.each do |cash_box| %>
+  <tr>
+    <td><%=h cash_box.name %></td>
+    <td><%=h cash_box.location %></td>
+    <td><%=h cash_box.manager %></td>
+    <td><%= link_to 'Show', cash_box %></td>
+    <td><%= link_to 'Edit', edit_cash_box_path(cash_box) %></td>
+    <td><%= link_to 'Destroy', cash_box, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New cash_box', new_cash_box_path %>
